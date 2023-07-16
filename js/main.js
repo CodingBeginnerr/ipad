@@ -46,15 +46,18 @@ const searchDelayEls=[...searchWrapEl.querySelectorAll('li')]
 
 searchStarterEl.addEventListener('click',showSearch)
 
-searchCloserEl.addEventListener('click',hiddenSearch)
+searchCloserEl.addEventListener('click',function(event){
+  event.stopPropagation()
+  hidenSearch()
+})
 
-searchshadowEl.addEventListener('click',hiddenSearch)
+searchshadowEl.addEventListener('click',hidenSearch)
 
 
 
 function showSearch(){
   headerEl.classList.add('searching')
-  document.documentElement.classList.add('fixed')
+  stopScroll()
   
   headerMenuEls.reverse().forEach(function(el, index){
     el.style.transitionDelay= index * .4 / headerMenuEls.length + 's'
@@ -72,9 +75,9 @@ function showSearch(){
 
 }
 
-function hiddenSearch(){
+function hidenSearch(){
   headerEl.classList.remove('searching')
-  document.documentElement.classList.remove('fixed')
+  playScroll()
   
   headerMenuEls.reverse().forEach(function(el, index){
     el.style.transitionDelay= index * .4 / headerMenuEls.length + 's'
@@ -91,6 +94,80 @@ function hiddenSearch(){
   searchInputEl.value=''
 }
 
+function playScroll(){
+  document.documentElement.classList.remove('fixed')
+}
+
+function stopScroll(){
+  document.documentElement.classList.add('fixed')
+}
+
+
+/// 헤더 메뉴 토글!
+const menuStarterEl=document.querySelector('header .menu-starter')
+menuStarterEl.addEventListener('click', function(){
+  if(headerEl.classList.contains('menuing')){
+    headerEl.classList.remove('menuing')
+    searchInputEl.value=''
+    playScroll()
+  }else{
+    headerEl.classList.add('menuing')
+    stopScroll()
+  }
+})
+
+
+// 헤더 검색
+
+const searchTextFieldEl=document.querySelector('header .textfield')
+const searchCancelEl=document.querySelector('header .search-canceler')
+searchTextFieldEl.addEventListener('click',function(){
+  headerEl.classList.add('searching--mobile')
+  searchInputEl.focus()
+})
+searchCancelEl.addEventListener('click',function(){
+  headerEl.classList.remove('searching--mobile')
+})
+
+
+//
+window.addEventListener('resize',function(){
+  if(this.window.innerWidth <=740){
+    headerEl.classList.remove('searching')
+  }else{
+    headerEl.classList.remove('searching--mobile')
+  }
+})
+
+
+const navEl=document.querySelector('nav')
+const navMenuToggleEl=navEl.querySelector('.menu-toggler')
+const navMenuShadowEl=navEl.querySelector('.shadow')
+
+navMenuToggleEl.addEventListener('click',function(){
+  if(navEl.classList.contains('menuing')){
+    hiedeNavMenu()
+  }else{
+    showNavMenu()
+  }
+})
+
+navEl.addEventListener('click',function(event){
+  event.stopPropagation()
+})
+
+navMenuShadowEl.addEventListener('click',hiedeNavMenu)
+
+window.addEventListener('click',hiedeNavMenu)
+
+
+function showNavMenu(){
+  navEl.classList.add('menuing')
+}
+
+function hiedeNavMenu(){
+  navEl.classList.remove('menuing')
+}
 
 
 //요소의 가시성 관찰
